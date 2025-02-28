@@ -1,3 +1,6 @@
+# Fork added RowDual
+bindings for glp_get_row_dual
+
 # glpk
 
 Package glpk contains Go bindings for GLPK (GNU Linear Programming Kit).
