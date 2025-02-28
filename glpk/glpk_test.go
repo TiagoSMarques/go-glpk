@@ -622,3 +622,28 @@ func TestGarbageCollection(t *testing.T) {
 		lp2.Delete()
 	}
 }
+
+// TestRowDual tests the RowDual function by setting up a simple LP problem.
+func TestRowDual(t *testing.T) {
+	lp := New()
+	defer lp.Delete()
+
+	lp.SetProbName("test")
+	lp.AddRows(1) // GLPK row 1
+	lp.AddCols(1) // GLPK column 1
+	lp.SetObjDir(MAX)
+	lp.SetColBnds(1, LO, 0.0, 0.0)                                 // x >= 0
+	lp.SetRowBnds(1, UP, 0.0, 1.0)                                 // x <= 1
+	lp.LoadMatrix([]int32{0, 1}, []int32{0, 1}, []float64{0, 1.0}) // Row 1, Col 1 = 1
+	lp.SetObjCoef(1, 1.0)                                          // Maximize x
+
+	if err := lp.Simplex(nil); err != nil {
+		t.Fatalf("Simplex failed: %v", err)
+	}
+
+	dual := lp.RowDual(0) // Row 0 -> GLPK row 1
+	expected := 1.0
+	if dual != expected {
+		t.Errorf("RowDual(0) = %f, want %f", dual, expected)
+	}
+}

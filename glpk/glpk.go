@@ -230,7 +230,7 @@ func (p *Prob) SetObjCoef(j int, coef float64) {
 
 // SetMatRow sets (replaces) i-th row. It sets
 //
-//     matrix[i, ind[j]] = val[j]
+//	matrix[i, ind[j]] = val[j]
 //
 // for j=1..len(ind). ind[0] and val[0] are ignored. Requires
 // len(ind) = len(val).
@@ -248,7 +248,7 @@ func (p *Prob) SetMatRow(i int, ind []int32, val []float64) {
 
 // SetMatCol sets (replaces) j-th column. It sets
 //
-//     matrix[ind[i], j] = val[i]
+//	matrix[ind[i], j] = val[i]
 //
 // for i=1..len(ind). ind[0] and val[0] are ignored. Requires
 // len(ind) = len(val).
@@ -266,7 +266,7 @@ func (p *Prob) SetMatCol(j int, ind []int32, val []float64) {
 
 // LoadMatrix replaces all of the constraint matrix. It sets
 //
-//     matrix[ia[i], ja[i]] = ar[i]
+//	matrix[ia[i], ja[i]] = ar[i]
 //
 // for i = 1..len(ia). ia[0], ja[0], and ar[0] are ignored. It
 // requiers len(ia)=len(ja)=len(ar).
@@ -802,6 +802,11 @@ func (p *Prob) RowStat(i int) VarStat {
 // TODO:
 // glp_get_row_prim
 // glp_get_row_dual
+// RowDual returns the dual value (shadow price) of the specified row.
+func (p *Prob) RowDual(row int) float64 {
+
+	return float64(C.glp_get_row_dual(p.p.p, C.int(row+1)))
+}
 
 // ColStat returns the current status of j-th column structural
 // variable.
