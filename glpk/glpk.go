@@ -805,7 +805,10 @@ func (p *Prob) RowStat(i int) VarStat {
 // RowDual returns the dual value (shadow price) of the specified row.
 func (p *Prob) RowDual(row int) float64 {
 
-	return float64(C.glp_get_row_dual(p.p.p, C.int(row+1)))
+	if row < 1 || row > p.NumRows() {
+		panic("RowDual called with invalid row number")
+	}
+	return float64(C.glp_get_row_dual(p.p.p, C.int(row)))
 }
 
 // ColStat returns the current status of j-th column structural
