@@ -38,7 +38,6 @@
 package glpk
 
 import (
-	"reflect"
 	"unsafe"
 )
 
@@ -241,9 +240,9 @@ func (p *Prob) SetMatRow(i int, ind []int32, val []float64) {
 	if len(ind) != len(val) {
 		panic("len(ind) and len(val) should be equal")
 	}
-	indH := (*reflect.SliceHeader)(unsafe.Pointer(&ind))
-	valH := (*reflect.SliceHeader)(unsafe.Pointer(&val))
-	C.glp_set_mat_row(p.p.p, C.int(i), C.int(len(ind)-1), (*C.int)(unsafe.Pointer(indH.Data)), (*C.double)(unsafe.Pointer(valH.Data)))
+	indH := unsafe.SliceData(ind)
+	valH := unsafe.SliceData(val)
+	C.glp_set_mat_row(p.p.p, C.int(i), C.int(len(ind)-1), (*C.int)(indH), (*C.double)(valH))
 }
 
 // SetMatCol sets (replaces) j-th column. It sets
@@ -259,9 +258,9 @@ func (p *Prob) SetMatCol(j int, ind []int32, val []float64) {
 	if len(ind) != len(val) {
 		panic("len(ind) and len(val) should be equal")
 	}
-	indH := (*reflect.SliceHeader)(unsafe.Pointer(&ind))
-	valH := (*reflect.SliceHeader)(unsafe.Pointer(&val))
-	C.glp_set_mat_col(p.p.p, C.int(j), C.int(len(ind)-1), (*C.int)(unsafe.Pointer(indH.Data)), (*C.double)(unsafe.Pointer(valH.Data)))
+	indH := unsafe.SliceData(ind)
+	valH := unsafe.SliceData(val)
+	C.glp_set_mat_col(p.p.p, C.int(j), C.int(len(ind)-1), (*C.int)(indH), (*C.double)(valH))
 }
 
 // LoadMatrix replaces all of the constraint matrix. It sets
@@ -277,10 +276,10 @@ func (p *Prob) LoadMatrix(ia, ja []int32, ar []float64) {
 	if len(ia) != len(ja) || len(ia) != len(ar) {
 		panic("len(ia) and len(ja) and len(ar) should be equal")
 	}
-	iaH := (*reflect.SliceHeader)(unsafe.Pointer(&ia))
-	jaH := (*reflect.SliceHeader)(unsafe.Pointer(&ja))
-	arH := (*reflect.SliceHeader)(unsafe.Pointer(&ar))
-	C.glp_load_matrix(p.p.p, C.int(len(ia)-1), (*C.int)(unsafe.Pointer(iaH.Data)), (*C.int)(unsafe.Pointer(jaH.Data)), (*C.double)(unsafe.Pointer(arH.Data)))
+	iaH := unsafe.SliceData(ia)
+	jaH := unsafe.SliceData(ja)
+	arH := unsafe.SliceData(ar)
+	C.glp_load_matrix(p.p.p, C.int(len(ia)-1), (*C.int)(iaH), (*C.int)(jaH), (*C.double)(arH))
 }
 
 // TODO:
@@ -451,9 +450,9 @@ func (p *Prob) MatRow(i int) (ind []int32, val []float64) {
 	length := C.glp_get_mat_row(p.p.p, C.int(i), nil, nil)
 	ind = make([]int32, length+1)
 	val = make([]float64, length+1)
-	indH := (*reflect.SliceHeader)(unsafe.Pointer(&ind))
-	valH := (*reflect.SliceHeader)(unsafe.Pointer(&val))
-	C.glp_get_mat_row(p.p.p, C.int(i), (*C.int)(unsafe.Pointer(indH.Data)), (*C.double)(unsafe.Pointer(valH.Data)))
+	indH := unsafe.SliceData(ind)
+	valH := unsafe.SliceData(val)
+	C.glp_get_mat_row(p.p.p, C.int(i), (*C.int)(indH), (*C.double)(valH))
 	return
 }
 
@@ -471,9 +470,9 @@ func (p *Prob) MatCol(j int) (ind []int32, val []float64) {
 	length := C.glp_get_mat_col(p.p.p, C.int(j), nil, nil)
 	ind = make([]int32, length+1)
 	val = make([]float64, length+1)
-	indH := (*reflect.SliceHeader)(unsafe.Pointer(&ind))
-	valH := (*reflect.SliceHeader)(unsafe.Pointer(&val))
-	C.glp_get_mat_col(p.p.p, C.int(j), (*C.int)(unsafe.Pointer(indH.Data)), (*C.double)(unsafe.Pointer(valH.Data)))
+	indH := unsafe.SliceData(ind)
+	valH := unsafe.SliceData(val)
+	C.glp_get_mat_col(p.p.p, C.int(j), (*C.int)(indH), (*C.double)(valH))
 	return
 }
 
